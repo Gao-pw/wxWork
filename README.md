@@ -1,77 +1,99 @@
-ZendSkeletonApplication
+Briquettes(微信公众号运营工具)
 =======================
+
+![](https://img.shields.io/badge/framework-Zend2-yellowgreen)
+
+![](https://img.shields.io/badge/version-v0.0.2-brightgreen)
+
+![](https://img.shields.io/badge/PHP-7.2-lightgrey)
 
 Introduction
 ------------
-This is a simple, skeleton application using the ZF2 MVC layer and module
-systems. This application is meant to be used as a starting place for those
-looking to get their feet wet with ZF2.
+`Briquettes`：煤球，即**"媒"球**的谐音，旨在打造一个微信公众号运营生态。感谢 [微信官方文档](https://developers.weixin.qq.com/doc/offiaccount/Getting_Started/Overview.html ) 提供的详细接口说明**(鹅厂NB!文档写的太棒了)**。本工具为**微信公众号运营者**提供服务，包括**数据统计**，**绩效管理**，**FTP空间管理**等常用功能，目前系统是通过`Web page`进行访问，后续更新到使用`微信公众号`进行管理。
+
+该系统还在完善ing，欢迎各位提交Issues,pr。
+
+
+
+## Feature
+
+* **绩效管理**：对运营者工作进行统计
+* **FTP空间管理**：针对新媒体工作特性，解决跨版本合作问题。（针对校园网用户，网速较差环境极佳）ps.还在完善开发
+
+
 
 Installation
 ------------
 
-Using Composer (recommended)
-----------------------------
-The recommended way to get a working copy of this project is to clone the repository
-and use `composer` to install dependencies using the `create-project` command:
+### Using Composer (must be installed)
 
-    curl -s https://getcomposer.org/installer | php --
-    php composer.phar create-project -sdev --repository-url="https://packages.zendframework.com" zendframework/skeleton-application path/to/install
+```shell
+cd my/project/dir
+git clone https://github.com/Gao-pw/wxWork.git
+cd wxWork
+php composer.phar self-update
+php composer.phar install
+```
 
-Alternately, clone the repository and manually invoke `composer` using the shipped
-`composer.phar`:
 
-    cd my/project/dir
-    git clone git://github.com/zendframework/ZendSkeletonApplication.git
-    cd ZendSkeletonApplication
-    php composer.phar self-update
-    php composer.phar install
 
-(The `self-update` directive is to ensure you have an up-to-date `composer.phar`
-available.)
+### DB config
 
-Another alternative for downloading the project is to grab it via `curl`, and
-then pass it to `tar`:
+根目录 --config -- autoload -- global.php
 
-    cd my/project/dir
-    curl -#L https://github.com/zendframework/ZendSkeletonApplication/tarball/master | tar xz --strip-components=1
+```
+    'db' => array(
+        'driver'         => 'Pdo',
+        'dsn'            => 'mysql:dbname=xmtoa;host=localhost',
+        'driver_options' => array(
+            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+        ),
+        'user'=>'你的数据库名',
+        'password'=>"你的数据库密码",
+    ),
+```
 
-You would then invoke `composer` to install dependencies per the previous
-example.
 
-Using Git submodules
---------------------
-Alternatively, you can install using native git submodules:
 
-    git clone git://github.com/zendframework/ZendSkeletonApplication.git --recursive
 
-Web Server Setup
-----------------
 
-### PHP CLI Server
-
-The simplest way to get started if you are using PHP 5.4 or above is to start the internal PHP cli-server in the root directory:
-
-    php -S 0.0.0.0:8080 -t public/ public/index.php
-
-This will start the cli-server on port 8080, and bind it to all network
-interfaces.
-
-**Note: ** The built-in CLI server is *for development only*.
+## Question
 
 ### Apache Setup
 
-To setup apache, setup a virtual host to point to the public/ directory of the
-project and you should be ready to go! It should look something like below:
+伪静态配置
 
-    <VirtualHost *:80>
-        ServerName zf2-tutorial.localhost
-        DocumentRoot /path/to/zf2-tutorial/public
-        SetEnv APPLICATION_ENV "development"
-        <Directory /path/to/zf2-tutorial/public>
-            DirectoryIndex index.php
-            AllowOverride All
-            Order allow,deny
-            Allow from all
-        </Directory>
-    </VirtualHost>
+    RewriteEngine On
+    # The following rule tells Apache that if the requested filename
+    # exists, simply serve it.
+    RewriteCond %{REQUEST_FILENAME} -s [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.*$ - [L]
+    # The following rewrites all other queries to index.php. The 
+    # condition ensures that if you are using Apache aliases to do
+    # mass virtual hosting or installed the project in a subdirectory,
+    # the base path will be prepended to allow proper resolution of
+    # the index.php file; it will work in non-aliased environments
+    # as well, providing a safe, one-size fits all solution.
+    RewriteCond %{REQUEST_URI}::$1 ^(/.+)/(.*)::\2$
+    RewriteRule ^(.*) - [E=BASE:%1]
+    RewriteRule ^(.*)$ %{ENV:BASE}/index.php? [L]
+
+
+
+## LICENSE
+
+[MIT](LICENSE) © Gao-pw
+
+
+
+## 彩蛋
+
+### 开发历程
+
+* 2020.11.01 ：因学校新媒体部要统计运营者工作信息，手动收集信息重复工作太多，考虑用机器代替人工。
+* 2020.11.02：依据微信开发文档，完成处理Access_token值。
+* 2020.11.03 - 2020.11.18 ：忙于开题。
+* 2020.11.20：和远在上海的小胖子联系说他们公司也需要一套运营工具，遂合作。
+* 2020.11.21-22：完成第一版构建，并开源。
