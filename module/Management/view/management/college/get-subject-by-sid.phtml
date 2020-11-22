@@ -1,0 +1,50 @@
+<div id="form-box">
+<?php
+use Zend\Session\Container;
+$containerRid = new Container("rid");
+$ridArr = $containerRid->item;
+$this->form->setAttribute('action',$this->url('management',array('controller'=>'college','action'=>'addSubject','param1'=>$this->cid)));
+$this->form->setAttribute('method','POST');
+$this->form->prepare();
+echo $this->form()->openTag($this->form);
+echo "<div class='span4'>";
+echo $this->formRow($this->form->get("college_id"));//学院编号
+//<label class='lable'>学科编号</label>
+if (!in_array(10,$ridArr)){
+    echo "<div class='row'>".$this->formRow($this->form->get("subject_id"))."</div>";//学科编号
+    echo "<div class='row'>".$this->formRow($this->form->get("subject_name"))."</div>";//学科名称
+    echo "<div class='row dontShow'>".$this->formRow($this->form->get("full_time"))."</div>";//全日制
+    echo "<div class='row dontShow'>".$this->formRow($this->form->get("total_stu"))."</div>";//总招生人数
+    echo "<div class='row dontShow'>".$this->formRow($this->form->get("free_stu"))."</div>";//推免人数
+    echo "</div><div class='span4'>";
+// echo $this->formRow($this->form->get("LHPYDWM"))."</br>";//联合培养单位码
+// echo $this->formRow($this->form->get("LHPYDW"))."</br>";//联合培养单位
+    echo "<div class='row'>".$this->formRow($this->form->get("staff_id"))."</div>";//学科负责人
+    echo "<div class='row dontShow'>".$this->formRow($this->form->get("XZ"))."&nbsp;&nbsp;年</div>";//学制
+    echo "<div class='row dontShow'>".$this->formRow($this->form->get("remark"))."</div>";//备注
+}else {
+    echo "<div class='row'>" . $this->formRow($this->form->get("subject_id")) . "</div>";//学科编号
+    echo "<div class='row'>" . $this->formRow($this->form->get("subject_name")) . "</div>";//学科名称
+    echo "<div class='row dontShow'>" . $this->formRow($this->form->get("full_time")) . "</div>";//全日制
+    echo "<div class='row'>" . $this->formRow($this->form->get("total_stu")) . "</div>";//总招生人数
+    echo "<div class='row'>" . $this->formRow($this->form->get("free_stu")) . "</div>";//推免人数
+
+//echo "</div class='row'><div class='span4'>";
+//for($i=1;$i<=4;$i++){//考试科目
+//	echo "<div class='row'>".$this->formRow($this->form->get("course".$i))."</div>";
+//	echo "<div id='compelete-content$i' class='complete'></div>";
+//}
+
+    echo "</div><div class='span4'>";
+// echo $this->formRow($this->form->get("LHPYDWM"))."</br>";//联合培养单位码
+// echo $this->formRow($this->form->get("LHPYDW"))."</br>";//联合培养单位
+    echo "<div class='row'>" . $this->formRow($this->form->get("staff_id")) . "</div>";//学科负责人
+    echo "<div class='row'>" . $this->formRow($this->form->get("XZ")) . "&nbsp;&nbsp;年</div>";//学制
+    echo "<div class='row dontShow'>" . $this->formRow($this->form->get("remark")) . "</div>";//备注
+}
+echo "</div><div class='span12' style='text-align:center;margin-left:0;'>";
+echo $this->formRow($this->form->get("submit"));//提交
+echo "</div>";
+echo $this->form()->closeTag();
+?>
+</div>

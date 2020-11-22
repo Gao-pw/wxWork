@@ -1,0 +1,41 @@
+<!--<ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>-->
+<!--    --><?php
+//    echo "<li class='active'><a href='".$this->url("management/default",array("controller"=>"management","action"=>"loadExcel"))."' >一键导入学院用户</a></li>";
+//    echo "<li><a href='".$this->url("management/default",array("controller"=>"teacher","action"=>"showAllTeacher"))."' >学院用户管理</a></li>";
+//    echo "<li ><a href='".$this->url("management/default",array("controller"=>"systemManagement","action"=>"others"))."' >管理其他用户</a></li>";
+//    ?>
+<!--</ul>-->
+<ul id='myTab' class='nav nav-tabs' style='margin-top: 20px;'>
+    <?php
+    if (in_array("10",$this->rid)){
+        echo "<li class='active'><a href='".$this->url("management/default",array("controller"=>"management","action"=>"loadExcel"))."' >一键导入学院用户</a></li>";
+        //    echo "<li><a href='".$this->url("management/default",array("controller"=>"systemManagement","action"=>"addUser"))."' >新增用户</a></li>";
+        echo "<li ><a href='".$this->url("management/default",array("controller"=>"systemManagement","action"=>"addUser"))."' >用户管理</a></li>";
+    }
+
+    echo "<li class=''><a href='".$this->url("management/default",array("controller"=>"systemManagement","action"=>"others"))."' >管理其他用户</a></li>";
+    ?>
+</ul>
+<?php
+echo "<div class='' id='form-box' style=''>";
+//echo "<h3>导入学院用户csv</h3>";
+$this->form->setAttribute('action',$this->url('management/default',array('controller'=>'management','action'=>'loadExcel')));
+$this->form->setAttribute('method','POST');
+$this->form->prepare();
+echo $this->form()->openTag($this->form);
+echo $this->formRow($this->form->get("upload_file"));
+echo $this->formRow($this->form->get("submit"));
+echo $this->form()->closeTag();
+echo "</div>";
+?>
+
+<h3> 模板下载 </h3>
+<a href="/management/management/downloadExcel"> 模板文件下载 </a>
+
+<h3>使用说明</h3>
+<p>1.请先下载<span style="color: red;">csv文件模板</span>并填好信息，不可上传自定义文件</p>
+<p>2.上传后会自动读取数据并更新到数据库</p>
+<p>3.<span style="color: red;">院秘书</span>为<span style="color: red;">可选项</span>,若无该角色，则不用填写相关信息</p>
+<p>4.用户密码可为空，若不指定用户密码则默认为用户邮箱</p>
+<p>5.上传之前将表格另存为<span style="color: red;">csv格式</span></p>
+<br/>

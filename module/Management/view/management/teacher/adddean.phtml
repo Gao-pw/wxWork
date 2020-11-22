@@ -1,0 +1,110 @@
+<?php
+$title = '人员录入（带*为必填项目）';
+$this->headTitle($title);
+?>
+    <h3><?php echo $this->escapeHtml($title); ?></h3>
+<?php
+$this->form->setAttribute('action', $this->url('management/default', array('controller' => 'teacher', 'action' => 'adddean')));
+$this->form->setAttribute('method', 'POST');
+$this->form->prepare();
+$form = $this->form;
+
+echo $this->form()->openTag($form);
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"staff_id\">教师编号<a style='color: #f43838'>*</a></label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('staff_id'));
+echo "</div>";
+echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"staff_name\">教师姓名<a style='color: #f43838'>*</a></label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('staff_name'));
+echo "</div>";
+echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"email\">邮箱<a style='color: #f43838'>*</a></label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('email'));
+echo "</div>";
+echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"phone\">办公室电话</label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('phone'));
+echo "</div>";
+echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"cellphone\">移动电话</label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('cellphone'));
+echo "</div>";
+echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"title\">职称</label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('title'));
+echo "</div>";
+echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"position\">职位</label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('position'));
+echo "</div>";
+echo "</div>";
+
+echo "<div class=\"row form-group\">";
+echo "<label class=\"control-label col-lg-1\" for=\"college_id\">学院ID<a style='color: #f43838'>*</a></label>";
+echo "<div class=\"col-lg-5 col-md-6\">";
+echo $this->formRow($this->form->get('college_id'));
+echo "</div>";
+echo "</div>";
+
+echo $this->formSubmit($form->get('submit'));
+echo $this->form()->closeTag();
+echo "<div style=\"overflow:auto;overflow-x:hidden;\">
+    <table class=\"table\">";
+echo "<tr><td>姓名</td><td>职称</td><td>工号</td><td>职位</td><td>邮件</td><td>移动电话</td><td>办公电话</td><td>修改</td></tr>";
+foreach ($this->staff as $item) {
+    echo "<tr><td>" . $item['staff_name'] . "</td><td>" . $item['title'] . "</td><td>" . $item['staff_id'] . "</td><td>" . $item['position'] . "</td><td>" . $item['email'] . "</td><td>" . $item['cellphone'] . "</td><td>" . $item['phone'] . "</td><td><a class='btn btn-primary' onclick='autofill(" . $item['staff_id'] . ")'>修改</a><a class='btn btn-primary' onclick='deleteTeacher(" . $item['staff_id'] .",". $item['college_id']. ")' >删除</a></td></tr>";
+}
+echo "</table>
+</div>";
+?>
+<script>
+    function autofill(staff_id) {
+        $.ajax({
+            type: 'GET',
+            url: '/management/teacher/fillingMessage/' + staff_id,
+            dataType: 'json',
+            success: function (json) {
+                document.getElementById("email").value=json.staff['email'];
+                document.getElementById("staff_id").value=json.staff['staff_id'];
+                document.getElementById("staff_name").value=json.staff['staff_name'];
+                document.getElementById("phone").value=json.staff['phone'];
+                document.getElementById("cellphone").value=json.staff['cellphone'];
+                document.getElementById("title").value=json.staff['title'];
+                document.getElementById("position").value=json.staff['position'];
+                document.getElementById("college_id").value=json.staff['college_id'];
+            }
+        });
+    }
+    function deleteTeacher(uid,cid) {
+        $.ajax({
+            type: 'GET',
+            url: '/management/teacher/delete/'+ uid+"/"+cid,
+            dataType: 'json',
+            success:function (json) {
+                console.log(json);
+                alert(json.msg);
+                window.location.reload();
+            }
+        });
+    }
+</script>

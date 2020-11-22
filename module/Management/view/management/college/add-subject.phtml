@@ -1,0 +1,214 @@
+<?php
+// module/Basicinfo/view/basicinfo/basicinfo/add-subject.phtml
+$title = '学科信息录入';
+$this->headTitle($title);
+use Zend\Session\Container;
+$containerRid = new Container("rid");
+$ridArr = $containerRid->item;
+$containerUid = new Container("uid");
+$uid = $containerUid->item;
+?>
+<link href="/css/add-subject.css" media="screen" rel="stylesheet" type="text/css">
+<div class="row-fluid" id="main">
+<!--=========================面包屑==========================-->
+<div class='span12' id='bread'>
+<ul class="breadcrumb">
+    <?php
+    $role10 =0;
+    if(in_array(10,$ridArr)) {
+        $role10 = 1;
+        echo "<li><a href='" . $this->url("management/default", array("controller"=>"college","action" => "addCollege")) . "'>添加学院</a> </li>";
+    }?>
+  <li class="active">修改学科</li>
+  <li><a href='<?php echo $this->url("management/default",array("controller"=>"college","action"=>"addTeacher","param1"=>$this->cid));?>'>添加导师</a> <span class="divider">/</span></li>
+</ul>
+</div>
+
+<!--=========================录入新学科==========================-->
+<h3><?php echo $this->escapeHtml($this->college_name."学科修改");?></h3>
+<div id="form-box">
+
+<?php
+if(!in_array(10,$ridArr)){
+    echo "<div class='alert alert-danger' id='jingao' role='alert' style='display: none'></div>";
+}
+//echo "<div class='row' style='display: none'>".$this->formRow($this->form->get("full_time"))."</div>";//全日制
+if(!in_array(8,$ridArr)){
+    $this->form->setAttribute('action',$this->url('management/default',array('controller'=>'college','action'=>'addSubject','param1'=>$this->cid)));
+    $this->form->setAttribute('method','POST');
+    $this->form->prepare();
+    echo $this->form()->openTag($this->form);
+    echo "<div class='span4'>";
+    echo $this->formRow($this->form->get("college_id"));//学院编号
+//<label class='lable'>学科编号</label>
+    echo "<div class='row'>".$this->formRow($this->form->get("subject_id"))."</div>";//学科编号
+    echo "<div class='row'>".$this->formRow($this->form->get("subject_name"))."</div>";//学科名称
+    if(!in_array(10,$ridArr)) {
+        echo "<div class='row' style='display: none'>".$this->formRow($this->form->get("full_time"))."</div>";//全日制
+        echo "<div class='row' style='display: none'>" . $this->formRow($this->form->get("total_stu")) . "</div>";//总招生人数
+        echo "<div class='row' style='display: none'>" . $this->formRow($this->form->get("free_stu")) . "</div>";//推免人数
+        echo "</div><div class='span4'>";
+        echo "<div class='row'>".$this->formRow($this->form->get("staff_id"))."</div>";//学科负责人
+        echo "<div class='row' style='display: none'>".$this->formRow($this->form->get("XZ"))."&nbsp;&nbsp;年</div>";//学制
+        echo "<div class='row' style='display: none'>".$this->formRow($this->form->get("remark"))."</div>";//备注
+    }else{
+        echo "<div class='row dontShow' style='display: none'>" . $this->formRow($this->form->get("full_time"))."</div>";//全日制
+        echo "<div class='row'>" . $this->formRow($this->form->get("total_stu")) . "</div>";//总招生人数
+        echo "<div class='row'>" . $this->formRow($this->form->get("free_stu")) . "</div>";//推免人数
+        echo "</div><div class='span4'>";
+        echo "<div class='row'>".$this->formRow($this->form->get("staff_id"))."</div>";//学科负责人
+        echo "<div class='row' >".$this->formRow($this->form->get("XZ"))."&nbsp;&nbsp;年</div>";//学制
+        echo "<div class='row dontShow' style='display: none'>".$this->formRow($this->form->get("remark"))."</div>";//备注
+    }
+
+    echo "</div><div class='span12' style='text-align:center;margin-left:0;'>";
+    echo $this->formRow($this->form->get("submit"));//提交
+    echo "</div>";
+    echo $this->form()->closeTag();
+}else {
+    echo "您无修改学科权限，可以修改学科方向";
+}
+//echo "</div><div class='span4'>";
+//for($i=1;$i<=4;$i++){//考试科目
+//	echo "<div class='row'>".$this->formRow($this->form->get("course".$i))."</div>";
+//	echo "<div id='compelete-content$i' class='complete'></div>";
+//}
+?>
+</div>
+<!--    <script>-->
+<!--        $(function () {-->
+<!--            $("#submitbutton").click(function () {-->
+<!--                alert("点击ok");-->
+<!--                $(".noQRZ").attr('disabled',false);-->
+<!--                alert("移除成功");-->
+<!--            });-->
+<!--        });-->
+<!--    </script>-->
+<!--========================已添加的学科信息==================-->
+<div class="span12" id="exist-subjects">
+<hr>
+<h3>已添加的学科信息</h3>
+<table class='table table-hover'>
+	<thead><tr>
+	<td>编号</td>
+	<td>名称</td>
+    <td>学习方式</td>
+	<td>负责人</td>
+	<td>总招生数</td>
+	<td>推免数</td>
+	<td colspan="3">操作</td>
+</tr></thead>
+<?php
+if(!empty($this->frontData)){
+    if(in_array('err',$this->frontData)){
+        echo "<script>alert('自动修改人数失败，若无修改招生人数请忽略此提示');</script>";
+    }else{
+        echo "<script>alert('自动修改人数成功，当前".$this->frontData['college_name']."总招生人数:".$this->frontData['all_total_stu'].";总推免人数:".$this->frontData['all_free_stu']."。');</script>";
+    }
+}
+if(!empty($this->existSubjects)){
+	foreach ($this->existSubjects as $key => $subject) {
+	    $subject->subject_id = trim($subject->subject_id);
+		echo "<tr>";
+		echo "<td>".$subject->subject_id."</td>";
+		echo "<td>".$subject->subject_name."<input type='hidden' value='".$subject->subject_name."' id='".$subject->subject_id."'></td>";
+
+		$full_time_cn =($subject->full_time==1)?"全日制":"非全日制";
+		echo "<td>".$full_time_cn."<input type='hidden' value='".$subject->full_time."' id='full_time-".$subject->subject_id."'></td>";//全日制
+
+		if(!empty($subject->staff_id))
+			echo "<td>".$this->staffArr[$subject->staff_id]."</td>";
+		else
+			echo "<td><span class='text-error'>未设置</span></td>";
+
+		if(!empty($subject->total_stu))
+			echo "<td>".$subject->total_stu."</td>";
+		else{
+		    echo "<td><span class='text-error'>未设置</span></td>";
+        }
+
+		if(!empty($subject->free_stu) )
+			echo "<td>".$subject->free_stu."</td>";
+		else{
+		    echo "<td><span class='text-error'>未设置</span></td>";
+        }
+
+		//echo "<td><button type='button' class='btn btn-primary'  data-toggle='modal' data-target='#myModal' onclick=showDetail('".$subject->subject_id."')>详情</button></td>";//data-toggle='modal' data-target='#myModal'
+
+        if(in_array(8,$ridArr)){
+            echo "<td>无权限</td>";
+            if($subject->staff_id==$uid){
+                echo "<td><a href='".$this->url(
+                        "management/default",
+                        array(
+                            "controller"=>"college",
+                            "action"=>"addProfession",
+                            "param1"=>$subject->subject_id,
+                            //                    "param2"=>$this->cid,
+                            //                    "param3"=>$subject->full_time,
+                        ),
+                        array(
+                            'query' => array(
+                                'college_id' => $this->cid,
+                                'full_time' => $subject->full_time,
+                            )
+                        )
+                    )."'>设置方向</a></td>";
+                echo "</tr>";
+            }else{
+                echo "<td>无权限</td>";
+            }
+        }else{
+            echo "<td><button onclick=deleteSubject('".$subject->subject_id."','".$subject->full_time."');>删除</button</td>";
+            echo "<td><button onclick=editSubject('".$subject->subject_id."','".$subject->full_time."');>编辑</button></td>";
+            echo "<td><a href='".$this->url(
+                    "management/default",
+                    array(
+                        "controller"=>"college",
+                        "action"=>"addProfession",
+                        "param1"=>$subject->subject_id,
+                        //                    "param2"=>$this->cid,
+                        //                    "param3"=>$subject->full_time,
+                    ),
+                    array(
+                        'query' => array(
+                            'college_id' => $this->cid,
+                            'full_time' => $subject->full_time,
+                        )
+                    )
+                )."'>设置方向</a></td>";
+        }
+		echo "</tr>";
+	}
+}
+else{
+	echo "<tr><td colspan='7'>没有数据</td></tr>";
+}
+?>
+</table>
+</div>
+</div>
+
+
+<!-- Modal -->
+<!--<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">-->
+<!--  <div class="modal-dialog" role="document">-->
+<!--    <div class="modal-content">-->
+<!--      <div class="modal-header">-->
+<!--        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>-->
+<!--        <h4 class="modal-title" id="myModalLabel">Modal title</h4>-->
+<!--      </div>-->
+<!--      <div class="modal-body" id="modal-body">-->
+<!---->
+<!--      </div>-->
+<!--      <div class="modal-footer">-->
+<!--        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>-->
+<!--        <button type="button" class="btn btn-primary">Save changes</button>-->
+<!--      </div>-->
+<!--    </div>-->
+<!--  </div>-->
+<!--</div>-->
+
+<script type="text/javascript" src="<?php echo $this->basePath('js/management/add-subject.js?version=1');?>"></script>
+<script type="text/javascript" src="<?php echo $this->basePath("js/jquery.min.js");?>">
+</script>

@@ -1,0 +1,95 @@
+<?php
+// module/Basicinfo/view/basicinfo/basicinfo/add-profession.phtml
+$title = '方向信息录入';
+$this->headTitle($title);
+use Zend\Session\Container;
+$containerRid = new Container("rid");
+$ridArr = $containerRid->item;
+?>
+<link href="/css/add-subject.css" media="screen" rel="stylesheet" type="text/css">
+<div class="row-fluid" id="main">
+<!--=========================面包屑==========================-->
+<div class='span12' id='bread'>
+<ul class="breadcrumb">
+    <?php
+    $role10 =0;
+    if(in_array(10,$ridArr)) {
+        $role10 = 1;
+        echo "<li><a href='" . $this->url("management/default", array("controller"=>"college","action" => "addCollege")) . "'>添加学院</a> </li>";
+    }?>
+
+  <li><a href='<?php echo $this->url("management/default",array("controller"=>"college","action"=>"addSubject","param1"=>trim($this->cid)));?>'>添加学科</a> </li>
+  <li><a href='<?php echo $this->url("management/default",array("controller"=>"college","action"=>"addTeacher","param1"=>trim($this->cid)));?>'>添加导师</a> </li>
+  <li class="active">添加方向</li>
+</ul>
+</div>
+<h3><?php
+    echo "<a href='".$this->url("management/default",array("controller"=>"college","action"=>"addSubject","param1"=>trim($this->cid)))."'>".$this->college_name."</a>";
+    echo " ".$this->subject_name." ".$this->full_time_cn." 方向添加";
+    ?>
+</h3>
+
+
+<?php
+//echo "<input type='hidden' value='".$this->cid."' id='college_id' name='college_id'/>";
+$role9=0;
+if($role10==1||in_array(9,$ridArr)||in_array(11,$ridArr)||in_array(8,$ridArr)){
+    $role9=1;
+    $this->form->setAttribute('action', $this->url('management/default', array('controller' => 'college', 'action' => 'addProfession', 'param1' => $this->sid)));
+    $this->form->setAttribute('method', 'POST');
+    $this->form->prepare();
+    echo $this->form()->openTag($this->form);
+    echo "<input type='hidden' value='".$this->cid."' id='college_id' name='college_id'/>";//
+    echo "<input type='hidden' value='".$this->full_time."' id='full_time' name='full_time'/>";//
+//echo $this->formRow($this->form->get("cid"))."</br>";//学院编号
+    echo $this->formRow($this->form->get("profession_id")) . "</br>";//方向编号
+    echo $this->formRow($this->form->get("profession_name")) . "</br>";//方向名称
+    echo $this->formRow($this->form->get("staff_id")) . "</br>";//方向负责人
+    echo $this->formRow($this->form->get("submit"));
+    echo $this->form()->closeTag();
+}
+?>
+
+<hr>
+<h3>已添加的方向信息</h3>
+<table class='table table-hover'>
+<thead>
+	<tr>
+	<td>方向编号</td>
+	<td>方向名称</td>
+    <td>方向负责人</td>
+<?php
+if($role10==1 || $role9==1)
+	echo "<td colspan='1'>操作</td>";
+	?>
+</tr>
+</thead>
+<?php
+if(!empty($this->existProfessions)){
+	//var_dump($this->existProfessions);
+    echo "<input type='hidden' value='".$this->cid."' id='cid' name='cid'/>";
+	foreach ($this->existProfessions as $key => $profession) {
+		echo "<tr><td>".$profession->profession_id."</td>";
+		echo "<td>".$profession->profession_name."</td>";
+		if($profession->staff_id!="")
+            echo "<td>".$this->staffArr[$profession->staff_id]."</td>";
+		else echo "<td></td>";
+        if($role10==1 || $role9==1) {
+            //echo "<td><a href='".$this->url("basicinfo",array("action"=>"deleteProfession","id"=>$profession->profession_id."-".$sid))."'>删除</td>";
+            echo "<td><button onclick=editProfession('" . $profession->prof_id_unique . "');>编辑</button></td>";
+            echo "<td><button onclick=deleteProfession('" . $profession->prof_id_unique . "');>删除</button></td>";
+        }
+		//echo "<td>编辑</td>";
+		//echo "<td><a href='".$this->url("basicinfo",array("action"=>"addProfession","id"=>$subject->subject_id))."'>设置导师</a></td>";
+		echo "</tr>";
+	}
+}
+else{
+	echo "<tr><td colspan='4'>没有数据</td></tr></table>";
+}
+echo "</table>";
+
+?>
+
+</div>
+<script type="text/javascript" src="<?php echo $this->basePath('js/management/add-prof.js?version=3');?>"></script>

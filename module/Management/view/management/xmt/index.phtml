@@ -1,0 +1,176 @@
+<?php
+    if($this->data['user_type'] == 1){
+        $title = $this->data['username'].'运营工作記錄';
+    }else{
+        $title = $this->data['username'].'_管理者';
+    }
+    echo $this->headTitle($title);
+    echo "<h1>welcome，".$this->data['username']."</h1>";
+    echo "<span style='display: none' id='non_username'>".$this->data['username']."</span>"
+?>
+
+<?php
+    /**
+     * 运营者
+     */
+    if($this->data['user_type'] == 1) {
+        ?>
+        <div class="xmt table-responsive">
+            <h2>新增推送记录</h2>
+            <button onclick="addRecord()" type="button">增加一条记录</button>
+            <form class="form_xmt_push" method="post" action="/management/xmt/pushRecord">
+                <table id="push_table" class="table table-bordered table-condensed">
+                    <tr>
+                        <th>推送日期</th>
+                        <th>推送题目</th>
+                        <th>推送链接</th>
+                        <th>推送位置</th>
+                        <th>阅读量</th>
+                        <th>推送者</th>
+                        <th>删除</th>
+                    </tr>
+                </table>
+                <button>提交</button>
+            </form>
+        </div>
+        <script>
+            function addRecord() {
+                let username = document.getElementById('non_username').innerText;
+                let table = document.getElementById('push_table');
+                let rows = table.getElementsByTagName('tr');
+                let tr = document.createElement('tr');
+                tr.setAttribute('id','push_record_'+rows.length);
+                let add_td = "<td><input type='date' value='2020-06-10' id='"+rows.length+"_date' name='date[]' onchange='getWxJson("+rows.length+",this)'></td>"+
+                             "<td><select name='title[]' id='"+rows.length+"_title'>" +
+                             "<option value='0' selected>请先选择推送日期</option>"+
+                             "</select></td>"+
+                             "<td><input type='text' id='"+rows.length+"_link' name='link[]' readonly></td>"+
+                             "<td><input type='text' id='"+rows.length+"_position' name='position[]' readonly></td>"+
+                             "<td><input type='text' id='"+rows.length+"_read' name='read[]' readonly></td>"+
+                             "<td><input type='text' id='"+rows.length+"_name' name='name[]' readonly value='"+username+"'></td>"+
+                             "<td><button onclick='deleteRecord(this)' type='button'>删除</button></td>"
+                ;
+                tr.innerHTML = add_td;
+                table.appendChild(tr);
+            }
+
+            /**
+             * 删除该记录
+             * @param obj
+             */
+            function deleteRecord(obj){
+                var tr = obj.parentNode.parentNode;
+                console.log(tr);
+                var table = tr.parentNode;
+                table.removeChild(tr);
+            }
+
+
+            function postAjax(url,data,callback) {
+                let request = new XMLHttpRequest();
+                request.open("POST",url,false);
+                request.onreadystatechange = function () {
+                    if(request.readyState === 4&&request.status===200){
+                        var type = request.getResponseHeader('Content-Type');
+                        //let data = JSON.parse(request.responseText);
+                        //console.log(request.responseText);
+                        if(type === "application/json"){
+                            console.log("请求成功");
+                            let data = JSON.parse(request.responseText);
+                            console.log(data);
+                            return data
+                    //        callback(data);
+                        }else {
+                            return null;
+                        }
+                    }
+                };
+                request.setRequestHeader("Content-Type","application/json");
+                request.send(JSON.stringify(data));
+
+            }
+
+
+            /**
+             * 获取同步post
+             * */
+            function asPost(url,data) {
+                let request = new XMLHttpRequest();
+                request.open("POST",url,false);
+                request.setRequestHeader("Content-Type","application/json");
+                request.send(JSON.stringify(data));
+                let type = request.getResponseHeader("Content-Type");
+                if(type === "application/json"){
+                    console.log("请求成功");
+                    let data = JSON.parse(request.responseText);
+                    return data.list;
+                }
+            }
+
+            let global_date =[];
+
+            /**
+             * 获取对应时间的文章json数据
+             * @param index
+             * @param obj
+             */
+            function getWxJson(index,obj) {
+                let val = obj.value;
+                let date =  asPost('/management/xmt/testJson',{'date':val});
+                global_date[index] = date;
+                let temp_str ="<option value='0'>请选择推送题目</option>";
+                for (let i in date){
+                    let obj = date[i];
+                    temp_str += "<option value='"+obj.title+"'>"+obj.title+"</option>";
+                }
+                let title = document.getElementById(index+'_title');
+                title.setAttribute('onchange','setValue(this,'+index+')');
+                title.innerHTML = temp_str;
+            }
+
+            function setValue(obj,index) {
+                let index_title = obj.selectedIndex;
+                console.log(index_title);
+                let value = obj.value;
+                if(index_title == 0){
+                    console.log("推送题目为null");
+                    alert("请选择推送题目");
+                    document.getElementById(index+"_link").value = null;
+                    document.getElementById(index+"_position").value = null;
+                    document.getElementById(index+"_read").value = null;
+
+                    return false;
+                }else {
+                    let temp_data = global_date[index];
+                    let data = temp_data[index_title-1];
+                    //阅读数
+                    let i = countJson(data.details);
+                    let fin = data.details;
+                    let page_count =fin[i-1].int_page_read_count;
+                    let link = document.getElementById(index+"_link");
+                    link.setAttribute("onclick",'clickInput(this)');
+                    document.getElementById(index+"_link").value = data.url;
+                    document.getElementById(index+"_position").value = index_title;
+                    document.getElementById(index+"_read").value = page_count;
+                }
+
+            }
+
+            function clickInput(object) {
+                window.open(object.value,'_blank');
+            }
+
+            function countJson(data) {
+                let a = 0;
+                for(let i in  data){
+                    a++
+                }
+                return a;
+            }
+
+
+        </script>
+        
+        <?php
+    }
+?>

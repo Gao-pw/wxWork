@@ -1,0 +1,52 @@
+<style>
+    .tabChart-container{
+        width: 1000px;
+        height:600px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .tabChart-container-big{
+        width: 1000px;
+        height:1500px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .chart {
+        margin-top: 50px;
+    }
+</style>
+<!-- 引入echarts -->
+<!--<script type="text/javascript" src="--><?php //echo $this->basePath('js/echarts/echarts.min.js');?><!--"></script>-->
+<script crossorigin="anonymous" integrity="sha384-et+fqdf7kslHL5Ip8rXSJPUPODLa7eMfpFTBaCfnlMzrcAz/wxI5Xm/mNTZwd+7H" src="https://lib.baomitu.com/echarts/4.7.0/echarts.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/gh/Gao-pw/CDN/china.js"></script>
+<!--<h1>生源统计</h1>-->
+<br>
+<ul class="nav nav-tabs" id="selectTAB">
+    <li role="presentation" class="active"><a href="#tab1" data-toggle="tab">男女比例</a></li>
+    <li role="presentation"><a href="#tab2" data-toggle="tab">生源学校人数</a></li>
+    <li role="presentation"><a href="#tab3" data-toggle="tab">各省人数</a></li>
+    <li role="presentation"><a href="#tab4" data-toggle="tab">其他数据展示</a></li>
+<!--    <li role="presentation"><a href="#tab5" data-toggle="tab">学校推免招生统计</a></li>-->
+
+</ul>
+<div id="tabChart" class="tab-content">
+    <div class="tab-pane  active" id="tab1">
+        <div id="chartSex" class="tabChart-container center-block chart"></div>
+    </div>
+    <div class="tab-pane " id="tab2">
+        <div id="chartSy" class="tabChart-container center-block chart"></div>
+    </div>
+    <div class="tab-pane " id="tab3">
+        <div id="chartSf" class="tabChart-container center-block chart"></div>
+        <div id="chartSfZ" class="tabChart-container center-block chart"></div>
+    </div>
+    <div class="tab-pane " id="tab4">
+        <div id="chartElse" class="tabChart-container center-block chart"></div>
+    </div>
+<!--    <div class="tab-pane " id="tab5">-->
+<!--        <div id="chartSchool" class="tabChart-container-big center-block"></div>-->
+<!--    </div>-->
+</div>
+<script type="text/javascript" src="<?php echo $this->basePath('js/management/sytj.js');?>"></script>

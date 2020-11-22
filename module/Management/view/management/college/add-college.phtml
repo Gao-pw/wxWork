@@ -1,0 +1,111 @@
+<?php
+use Zend\Session\Container;
+
+$title = '学院信息录入';
+$this->headTitle($title);
+?>
+<style type="text/css">
+    .complete {
+    	display: none;
+    	position: absolute;
+    	background: white;
+    	border: 1px solid #DFDFDF;
+    	width: 200px;
+    	margin-left: 70px;
+    }
+    .black_overlay{
+        display: none;
+        position: fixed;
+        top: 0%;
+        left: 0%;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        z-index:1001;
+        -moz-opacity: 0.8;
+        opacity:.80;
+        filter: alpha(opacity=88);
+    }
+    .white_content {
+        display: none;
+        position: fixed;
+        top: 25%;
+        left: 25%;
+        width: 55%;
+        height: 55%;
+        padding: 20px;
+        border: 10px solid orange;
+        background-color: white;
+        z-index:1002;
+        overflow: auto;
+    }
+</style>
+<link href="/css/add-subject.css" media="screen" rel="stylesheet" type="text/css">
+
+<h3>修改学院</h3>
+<?php
+echo "<div class='' id='form-box' style='float: left'>";
+$this->form->setAttribute('action',$this->url('management/default',array('controller'=>'college','action'=>'addCollege')));
+$this->form->setAttribute('method','POST');
+$this->form->prepare();
+echo $this->form()->openTag($this->form);
+echo "<div class='row'>".$this->formRow($this->form->get("cid"))."</div>";//学院编号
+echo "<div class='row'>".$this->formRow($this->form->get("cname"))."</div>";//学院名称
+echo "<div class='row'>".$this->formRow($this->form->get("dean"))."</div>";//负责人
+echo "<div id='dean-complete-content' class='complete'></div>";
+echo "<div class='row'>".$this->formRow($this->form->get("manager"))."</div>";//院科研秘书
+echo "<div id='manager-complete-content' class='complete'></div>";
+echo "<div class='row'>".$this->formRow($this->form->get("tstu"))."</div>";//总招生数
+echo "<div class='row'>".$this->formRow($this->form->get("fstu"))."</div>";//推免数
+echo $this->formRow($this->form->get("submit"));
+echo $this->form()->closeTag();
+echo "</div>";
+?>
+
+<hr>
+<h3 style="clear: both">已添加的学院信息</h3>
+<table class='table table-hover'>
+	<thead><tr>
+	<td>编号</td>
+	<td>名称</td>
+	<td>院长</td>
+    <td>院秘书</td>
+	<td>总招生数</td>
+	<td>推免数</td>
+	<td colspan="5">操作</td>
+</tr></thead>
+<?php
+$containerUid = new Container('rid');
+$ridArr = $containerUid->item;
+foreach ($this->existColleges as $key => $college) {
+	echo "<tr><td>".$college->college_id."</td>";
+	echo "<td>".$college->college_name."</td>";
+	if(!is_null($college->manager_id))
+		echo "<td>".$this->staffArr[$college->manager_id]."</td>";
+	else
+		echo "<td><span class='text-error'>未设置</span></td>";
+    if(!empty($college->dean_id))
+        echo "<td>".$this->staffArr[$college->dean_id]."</td>";
+    else
+        echo "<td><span class='text-error'>未设置</span></td>";
+	if(!empty($college->total_stu))
+		echo "<td>".$college->total_stu."</td>";
+	else
+		echo "<td><span class='text-error'>未设置</span></td>";
+	if(!empty($college->free_stu))
+		echo "<td>".$college->free_stu."</td>";
+	else
+		echo "<td><span class='text-error'>未设置</span></td>";
+	echo "<td><button onclick=deleteCollege('".$college->college_id."');>删除</button</td>";
+	echo "<td><button onclick=editCollege('".$college->college_id."');>编辑院用户</button></td>";
+
+    echo "<td><a href='".$this->url("management/default",array("controller"=>"college","action"=>"addTeacher","param1"=>$college->college_id))."'>设置导师</a></td>";
+	echo "<td><a href='".$this->url("management/default",array("controller"=>"college","action"=>"addSubject","param1"=>$college->college_id))."'>设置学科</a></td></tr>";
+}
+echo "</table>";
+
+?>
+
+<script type="text/javascript" src="<?php echo $this->basePath('js/management/add-college.js');?>"></script>
+<script type="text/javascript" src="<?php echo $this->basePath('js/management/auto-get-staff.js?version=1');?>"></script>
+<!--<script type="text/javascript" src="--><?php //echo $this->basePath("js/jquery.min.js");?><!--"></script>-->

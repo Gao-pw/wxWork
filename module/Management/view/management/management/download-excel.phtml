@@ -1,0 +1,32 @@
+<?php
+//输出的文件类型为excel
+header("Content-type:application/vnd.ms-excel");
+//提示下载
+header("Content-Disposition:attachement;filename="."上传学院用户模板".date("Ymd").".xls");
+
+
+
+//输出表头
+echo "<table border='1'>";
+echo "<tr>";
+
+foreach ($this->title as $column){
+    echo "<th style='font-size: 24px'>";
+    echo $column;
+    echo "</th>";
+}
+echo "</tr>";
+
+//输出内容
+foreach ($this->info as $college){
+    echo "<tr>";
+    foreach ($this->title as $key=>$column) {
+        echo "<td style='vnd.ms-excel.numberformat:@'>";
+        if(!empty($college[$key])){
+            echo $college[$key];
+        }
+        echo "</td>";
+    }
+    echo "</tr>";
+}
+echo "</table>";
