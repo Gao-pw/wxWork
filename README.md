@@ -9,7 +9,7 @@ Briquettes(微信公众号运营工具)
 
 Introduction
 ------------
-`Briquettes`：煤球，即**"媒"球**的谐音，旨在打造一个微信公众号运营生态。感谢 [微信官方文档](https://developers.weixin.qq.com/doc/offiaccount/Getting_Started/Overview.html ) 提供的详细接口说明**(鹅厂NB!文档写的太棒了)**。本工具为**微信公众号运营者**提供服务，包括**数据统计**，**绩效管理**，**FTP空间管理**等常用功能，目前系统是通过`Web page`进行访问，后续更新到使用`微信公众号`进行管理。
+`Briquettes`：煤球，即"媒"球的谐音，旨在打造一个微信公众号运营生态。感谢 [微信官方文档](https://developers.weixin.qq.com/doc/offiaccount/Getting_Started/Overview.html ) 提供的详细接口说明**(鹅厂NB!文档写的太棒了)**。本工具为**微信公众号运营者**提供服务，包括**数据统计**，**绩效管理**，**FTP空间管理**等常用功能，目前系统是通过`Web page`进行访问，后续更新到使用`微信公众号`进行管理。
 
 该系统还在完善ing，欢迎各位提交Issues,pr。
 
